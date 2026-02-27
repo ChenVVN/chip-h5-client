@@ -146,7 +146,7 @@ import { io } from 'socket.io-client'
 import { showToast } from 'vant'
 import 'vant/lib/index.css'
 
-const API_BASE = window.location.protocol + '//' + window.location.hostname + ':3000'
+const API_BASE = 'https://chip-h5-server-production.up.railway.app'
 const WS_URL = window.location.protocol + '//' + window.location.hostname + ':3000'
 
 // Socket.io 连接
