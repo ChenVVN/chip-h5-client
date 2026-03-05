@@ -898,6 +898,8 @@ body { background: var(--background); font-family: var(--font-sans); -webkit-fon
   font-weight: 600;
   background: oklch(1 0 0 / 0.2);
   border: 1px solid oklch(1 0 0 / 0.3);
+  min-width: 60px;
+  height: 32px;
 }
 .refresh-btn :deep(.van-button__text) {
   color: var(--primary-foreground);
