@@ -217,8 +217,8 @@ import { io } from 'socket.io-client'
 import { showToast } from 'vant'
 import 'vant/lib/index.css'
 
-const API_BASE = 'http://localhost:3000'
-const WS_URL = 'http://localhost:3000'
+const API_BASE = 'https://chip-h5-server-production.up.railway.app'
+const WS_URL = 'https://chip-h5-server-production.up.railway.app'
 
 const socket = io(WS_URL, {
   transports: ['websocket', 'polling']
