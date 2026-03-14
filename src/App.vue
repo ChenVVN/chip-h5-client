@@ -212,7 +212,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { io } from 'socket.io-client'
 import { showToast } from 'vant'
 import 'vant/lib/index.css'
@@ -220,14 +220,49 @@ import 'vant/lib/index.css'
 const API_BASE = 'https://chip-h5-server-production.up.railway.app'
 const WS_URL = 'https://chip-h5-server-production.up.railway.app'
 
+// Socket.io 配置 - 增强重连能力
 const socket = io(WS_URL, {
-  transports: ['websocket', 'polling']
+  transports: ['websocket', 'polling'],
+  reconnection: true,           // 开启自动重连
+  reconnectionAttempts: 10,    // 最多重连10次
+  reconnectionDelay: 1000,      // 初始重连延迟 1s
+  reconnectionDelayMax: 5000,   // 最大重连延迟 5s
+  timeout: 20000,               // 连接超时 20s
+  pingTimeout: 60000,           // ping 超时 60s
+  pingInterval: 25000          // ping 间隔 25s
 })
 
+let currentRoomCode = ref('')
+
+// 监听连接事件
 socket.on('connect', () => {
-  console.log('WebSocket connected')
+  console.log('WebSocket connected:', socket.id)
+  // 连接成功后，如果之前在房间里，重新加入
+  if (currentRoomCode.value) {
+    socket.emit('joinRoom', currentRoomCode.value)
+    console.log('Re-joined room after connection:', currentRoomCode.value)
+  }
 })
 
+socket.on('disconnect', (reason) => {
+  console.log('WebSocket disconnected:', reason)
+  // 如果是服务端断开，可能需要手动重连
+})
+
+socket.on('reconnect', (attemptNumber) => {
+  console.log('WebSocket reconnected after', attemptNumber, 'attempts')
+  // 重新加入房间
+  if (currentRoomCode.value) {
+    socket.emit('joinRoom', currentRoomCode.value)
+  }
+})
+
+socket.on('reconnect_failed', () => {
+  console.log('WebSocket reconnection failed')
+  // 可以考虑使用 HTTP 轮询作为降级方案
+})
+
+// 监听房间更新
 socket.on('roomUpdate', (room) => {
   if (currentRoom.value && currentRoom.value.roomCode === room.roomCode) {
     currentRoom.value = room
@@ -352,6 +387,7 @@ async function createRoom() {
     const data = await res.json()
     if (data.success) {
       currentRoom.value = data.data
+      currentRoomCode.value = data.data.roomCode  // 保存房间号用于重连
       saveLastRoom(data.data.roomCode)
       socket.emit('joinRoom', data.data.roomCode)
       showSetNameModal.value = false
@@ -412,6 +448,7 @@ async function joinRoom(code) {
     const data = await res.json()
     if (data.success) {
       currentRoom.value = data.data
+      currentRoomCode.value = code  // 保存房间号用于重连
       // 用本地最新信息更新房间成员
       syncUserInfoInRoom()
       saveLastRoom(code)
@@ -737,12 +774,28 @@ function getLogActionText(action) {
   return action
 }
 
+// 页面可见性变化时自动刷新
+function handleVisibilityChange() {
+  if (document.visibilityState === 'visible' && currentRoom.value) {
+    console.log('Page visible, refreshing room data...')
+    refreshRoom()
+  }
+}
+
 onMounted(async () => {
   await initUser()
   tempNickname.value = currentUser.value?.nickname || ''
   tempAvatar.value = currentUser.value?.avatar || ''
   const saved = localStorage.getItem('lastRoomCode')
   if (saved) lastRoomCode.value = saved
+  
+  // 监听页面可见性变化
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+})
+
+onUnmounted(() => {
+  // 清理监听器
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 
 function saveLastRoom(roomCode) { localStorage.setItem('lastRoomCode', roomCode); lastRoomCode.value = roomCode }
@@ -761,6 +814,7 @@ async function leaveRoom() {
     })
   } catch (e) { /* ignore */ }
   currentRoom.value = null
+  currentRoomCode.value = ''  // 清空房间号，停止重连尝试
   // 不清除 lastRoomCode，保留最后一个房间供快速返回
 }
 
@@ -825,6 +879,7 @@ async function goToRoom(roomCode) {
     const data = await res.json()
     if (data.success) { 
       currentRoom.value = data.data
+      currentRoomCode.value = roomCode  // 保存房间号用于重连
       // 用本地最新信息同步房间内的成员数据
       syncUserInfoInRoom()
       saveLastRoom(roomCode)
