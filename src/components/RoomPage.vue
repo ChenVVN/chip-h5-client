@@ -139,33 +139,36 @@ function getLogTextClass(action) {
 
 <style scoped>
 .page-room {
-  min-height: 100vh;
-  padding-bottom: 100px;
+  height: 100vh;
+  height: 100dvh;
+  padding-bottom: 90px;
   background: #131313;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Room Header */
 .room-header {
   background: #131313;
-  padding: 16px 20px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(233, 193, 118, 0.1);
+  flex-shrink: 0;
 }
 
 .header-left {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #e9c176;
-  font-size: 22px;
+  font-size: 18px;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 8px;
 }
 
 .header-left:active {
@@ -173,14 +176,14 @@ function getLogTextClass(action) {
 }
 
 .header-right {
-  width: 60px;
+  width: 50px;
   display: flex;
   justify-content: flex-end;
 }
 
 .room-code {
   font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   color: #e9c176;
   letter-spacing: -0.02em;
@@ -188,14 +191,14 @@ function getLogTextClass(action) {
 
 .refresh-btn {
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: #e9c176;
   background: rgba(233, 193, 118, 0.1);
   border: 1px solid rgba(233, 193, 118, 0.2);
-  min-width: 56px;
-  height: 32px;
-  border-radius: 20px;
+  min-width: 44px;
+  height: 26px;
+  border-radius: 14px;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -216,7 +219,7 @@ function getLogTextClass(action) {
 .members-sidebar {
   width: 100px;
   background: #1c1b1b;
-  padding: 16px 12px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -237,6 +240,8 @@ function getLogTextClass(action) {
   background: #232323;
   border-radius: 12px;
   width: 100%;
+    border: 1px solid #343030;
+    box-shadow: 5px 4px 3px 0px;
 }
 
 .member-avatar-wrap {
@@ -266,7 +271,7 @@ function getLogTextClass(action) {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 10px;
   font-weight: 600;
-  color: #d1c5b4;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

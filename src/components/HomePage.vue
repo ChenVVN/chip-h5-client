@@ -66,44 +66,45 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 
 <style scoped>
 .page-home {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   background: #131313;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px;
+      padding: 50px 16px;
 }
 
 .home-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 48px;
-  margin-top: 20px;
+  margin-bottom: 40px;
+    margin-top: 40px;
 }
 
 .logo-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background: #353535;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 15px rgba(233, 193, 118, 0.1);
   border: 1px solid rgba(233, 193, 118, 0.2);
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .logo-icon {
-  font-size: 28px;
+  font-size: 20px;
   color: #e9c176;
   font-variation-settings: 'FILL' 1;
 }
 
 .title {
   font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 800;
   color: #e9c176;
   letter-spacing: -0.02em;
@@ -113,22 +114,23 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 .home-main {
   width: 100%;
   max-width: 400px;
+      margin: 30px 0;
 }
 
 .user-section {
-  margin-bottom: 48px;
+  margin-bottom: 12px;
 }
 
 .user-card {
   position: relative;
-  padding: 32px;
-  border-radius: 24px;
+  padding: 16px;
+  border-radius: 16px;
   background: #1c1b1b;
   border: 1px solid rgba(233, 193, 118, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   transition: all 0.3s;
 }
@@ -139,11 +141,11 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 
 .edit-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: rgba(233, 193, 118, 0.1);
   color: #e9c176;
   display: flex;
@@ -161,13 +163,13 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 }
 
 .avatar-wrap {
-  width: 128px;
-  height: 128px;
-  border-radius: 16px;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
   overflow: hidden;
   background: #20201f;
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
-  border: 4px solid #2a2a2a;
+  border: 2px solid #2a2a2a;
 }
 
 .avatar {
@@ -178,8 +180,8 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 
 .nickname {
   font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 700;
   color: #e5e2e1;
   letter-spacing: -0.02em;
 }
@@ -188,7 +190,7 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 /* Return Room Button with Gradient Border */
@@ -196,7 +198,7 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
   position: relative;
   width: 100%;
   padding: 2px;
-  border-radius: 12px;
+  border-radius: 10px;
   background: linear-gradient(135deg, #e9c176 0%, #c5a059 100%);
   border: none;
   cursor: pointer;
@@ -210,23 +212,23 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 .return-room-content {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 20px 20px 20px 24px;
+  gap: 8px;
+  padding: 12px 12px 12px 16px;
   background: #e9c176;
-  border-radius: 10px;
+  border-radius: 8px;
   transition: all 0.2s;
 }
 
 .return-room-content .arrow {
   color: #0e0e0e;
-  font-size: 18px;
+  font-size: 14px;
   margin-left: auto;
 }
 
 .icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: rgba(233, 193, 118, 0.1);
   display: flex;
   align-items: center;
@@ -235,7 +237,7 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 }
 
 .icon-wrap .material-symbols-outlined {
-  font-size: 22px;
+  font-size: 18px;
   color: #0e0e0e;
   font-variation-settings: 'FILL' 1;
 }
@@ -249,7 +251,7 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 
 .text-wrap .room-code {
   font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   color: #0e0e0e;
   text-shadow: 0 0 15px rgba(233, 193, 118, 0.3);
@@ -259,7 +261,7 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 .btn-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 8px;
 }
 
 .action-btn {
@@ -267,9 +269,9 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 24px;
-  border-radius: 16px;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 12px;
   background: #20201f;
   border: none;
   cursor: pointer;
@@ -286,13 +288,13 @@ const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg
 }
 
 .action-btn .material-symbols-outlined {
-  font-size: 24px;
+  font-size: 20px;
   color: #e9c176;
 }
 
 .action-btn span:last-child {
   font-family: 'Manrope', system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
   color: #e9c176;
 }
