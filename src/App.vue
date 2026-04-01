@@ -24,6 +24,7 @@
         @show-settle="showSettlePlan"
         @show-spend="showSpendModal = true"
         @show-reclaim="showReclaimModal = true"
+        @reclaim-all="handleReclaimAll"
       />
 
       <!-- 加入房间弹窗 -->
@@ -506,6 +507,7 @@ async function handleReclaimAll() {
         if (idx !== -1) { currentRoom.value.members[idx].avatar = myAvatar; currentRoom.value.members[idx].nickname = myNickname }
       }
       showReclaimModal.value = false
+      showToast({ message: `收回 ${deskScore} 积分成功`, position: 'top' })
     } else { showToast(data.error || '桌面积分不足') }
   } catch (e) { showToast('网络错误') }
   finally { loading.value = false }

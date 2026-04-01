@@ -43,12 +43,15 @@
       <!-- Right Content -->
       <main class="right-content">
         <!-- Score Cards -->
-        <div class="score-cards">
-          <div class="score-card desk">
-            <div class="score-label">桌面积分</div>
+       <div class="score-block">
+          <div class="desk-score">
+            <div class="score-label">
+              <div>桌面积分</div>
+              <button class="reclaim-all-btn" @click="$emit('reclaim-all')">全收</button>
+            </div>
             <div class="score-value">{{ room?.deskScore || 0 }}</div>
           </div>
-          <div class="score-card mine">
+          <div class="mine-score">
             <div class="score-label">我的积分</div>
             <div class="score-value">{{ myScore }}</div>
           </div>
@@ -61,7 +64,7 @@
             <button class="settle-btn" @click="$emit('show-settle')">结算方案</button>
           </div>
           <div class="log-list" v-if="room?.logs?.length > 0">
-            <div v-for="(log, index) in room.logs" :key="index" class="log-item">
+            <div v-for="(log, index) in room.logs" :key="log.timestamp || index" class="log-item" :class="{ 'log-new': index === 0 && room.logs.length > 0 }">
               <div class="log-left">
                 <span class="material-symbols-outlined log-icon" :class="getLogIconClass(log.action)">{{ getLogIcon(log.action) }}</span>
                 <span class="log-text" :class="getLogTextClass(log.action)">
@@ -99,7 +102,7 @@ defineProps({
   refreshing: Boolean
 })
 
-defineEmits(['go-home', 'refresh', 'show-settle', 'show-spend', 'show-reclaim'])
+defineEmits(['go-home', 'refresh', 'show-settle', 'show-spend', 'show-reclaim', 'reclaim-all'])
 
 const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="35" r="25" fill="%23bdc3c7"/><circle cx="50" cy="100" r="40" fill="%23bdc3c7"/></svg>'
 
@@ -151,7 +154,7 @@ function getLogTextClass(action) {
 /* Room Header */
 .room-header {
   background: #131313;
-  padding: 8px 16px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -306,6 +309,49 @@ function getLogTextClass(action) {
   gap: 12px;
 }
 
+.score-block {
+  background: #3d3a36;
+  padding: 20px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 220, 130, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  .desk-score {
+    border-bottom: 1px solid rgba(255, 220, 130, 0.2);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #e8d9b8;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .score-value {
+      color: #ffdd88;
+      font-size: 44px;
+      font-weight: 700;
+      margin-top: 6px;
+      text-shadow: 0 2px 10px rgba(255, 210, 100, 0.3);
+    }
+  }
+  .mine-score {
+    .score-label {
+      color: #e8d9b8;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .score-value {
+      color: #6ee7a0;
+      font-size: 38px;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(110, 231, 160, 0.25);
+    }
+  }
+}
+
 .score-card {
   flex: 1;
   background: #1c1b1b;
@@ -344,6 +390,26 @@ function getLogTextClass(action) {
   font-weight: 800;
   color: #e9c176;
   letter-spacing: -0.02em;
+}
+
+.reclaim-all-btn {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #98d3ba;
+  background: rgba(152, 211, 186, 0.15);
+  border: 1px solid rgba(152, 211, 186, 0.4);
+  padding: 6px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 150ms ease-out;
+}
+
+.reclaim-all-btn:active {
+  background: rgba(152, 211, 186, 0.3);
+  transform: scale(0.96);
 }
 
 /* Logs Area */
@@ -525,6 +591,22 @@ max-height: 600px;
 
 :deep(.van-button--success:active) {
   transform: scale(0.95);
+}
+
+/* 新日志动画 */
+@keyframes logFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.log-item.log-new {
+  animation: logFadeIn 0.4s ease-out forwards;
 }
 
 /* Material Symbols */
