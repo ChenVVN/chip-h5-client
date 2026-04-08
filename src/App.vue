@@ -85,8 +85,8 @@ import SpendModal from './components/SpendModal.vue'
 import ReclaimModal from './components/ReclaimModal.vue'
 import SettleModal from './components/SettleModal.vue'
 
-const API_BASE = 'http://8.129.231.250'
-const WS_URL = 'http://8.129.231.250'
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000'
+const WS_URL = import.meta.env.VITE_WS_URL || API_BASE
 
 // Socket.io 配置
 const socket = io(WS_URL, {
@@ -489,7 +489,7 @@ async function handleReclaim(amount) {
 
 async function handleReclaimAll() {
   const deskScore = currentRoom.value?.deskScore || 0
-  if (deskScore <= 0) { showToast('桌面积为0'); return }
+  if (deskScore <= 0) { showToast('桌面积分为0'); return }
   const myAvatar = currentUser.value?.avatar
   const myNickname = currentUser.value?.nickname
   loading.value = true
