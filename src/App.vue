@@ -206,13 +206,13 @@ async function initUser() {
     if (data.success) {
       if (data.data.nickname) {
         currentUser.value.nickname = data.data.nickname
-        if (!localNickname) {
+        if (!localNickname || localNickname !== data.data.nickname) {
           localStorage.setItem('nickname', data.data.nickname)
         }
       }
       if (data.data.avatar) {
         currentUser.value.avatar = data.data.avatar
-        if (!localAvatar) {
+        if (!localAvatar || localAvatar !== data.data.avatar) {
           localStorage.setItem('avatar', data.data.avatar)
         }
       }
@@ -352,24 +352,25 @@ async function confirmSetName({ nickname, avatar }) {
     })
     const data = await res.json()
     if (data.success) {
-      currentUser.value = { ...currentUser.value, nickname, avatar }
+      const savedAvatar = data.data?.avatar || avatar
+      currentUser.value = { ...currentUser.value, nickname, avatar: savedAvatar }
       localStorage.setItem('nickname', nickname)
-      if (avatar) {
-        localStorage.setItem('avatar', avatar)
+      if (savedAvatar) {
+        localStorage.setItem('avatar', savedAvatar)
       }
 
       if (currentRoom.value && currentRoom.value._id) {
         await fetch(`${API_BASE}/api/rooms/${currentRoom.value._id}/updateMember`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ odid: currentUser.value.odid, nickname, avatar })
+          body: JSON.stringify({ odid: currentUser.value.odid, nickname, avatar: savedAvatar })
         })
       }
 
       if (currentRoom.value && currentRoom.value.members) {
         const idx = currentRoom.value.members.findIndex(m => m.odid === currentUser.value.odid)
         if (idx !== -1) {
-          currentRoom.value.members[idx] = { ...currentRoom.value.members[idx], nickname, avatar }
+          currentRoom.value.members[idx] = { ...currentRoom.value.members[idx], nickname, avatar: savedAvatar }
         }
       }
 

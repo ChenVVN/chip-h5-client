@@ -29,8 +29,15 @@
             :key="member.odid"
             class="member-item"
           >
-            <div class="member-avatar-wrap">
-              <img :src="member.avatar || defaultAvatar" class="member-avatar" />
+            <div
+              class="member-avatar-wrap"
+              @click="openAvatarPreview(member)"
+            >
+              <img
+                :src="member.avatar || defaultAvatar"
+                :alt="`${member.nickname || '成员'}头像`"
+                class="member-avatar"
+              />
             </div>
             <span class="member-name">{{ member.nickname }}</span>
             <span class="member-score" :class="member.personalScore >= 0 ? 'positive' : 'negative'">
@@ -53,7 +60,7 @@
           </div>
           <div class="mine-score">
             <div class="score-label">我的积分</div>
-            <div class="score-value">{{ myScore }}</div>
+            <div class="score-value" :class="myScore >= 0 ? 'positive' : 'negative'">{{ myScore }}</div>
           </div>
         </div>
 
@@ -92,10 +99,27 @@
       <van-button type="danger" round @click="$emit('show-spend')">支出</van-button>
       <van-button type="success" round @click="$emit('show-reclaim')">收回</van-button>
     </div>
+
+    <div
+      v-if="previewMember"
+      class="avatar-preview-mask"
+      @click.self="closeAvatarPreview"
+    >
+      <div class="avatar-preview-card">
+        <img
+          :src="getPreviewAvatar(previewMember.avatar)"
+          :alt="`${previewMember.nickname || '成员'}大头像`"
+          class="avatar-preview-image"
+        />
+        <div class="avatar-preview-name">{{ previewMember.nickname || '未命名成员' }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
 defineProps({
   room: Object,
   myScore: Number,
@@ -105,6 +129,7 @@ defineProps({
 defineEmits(['go-home', 'refresh', 'show-settle', 'show-spend', 'show-reclaim', 'reclaim-all'])
 
 const defaultAvatar = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="35" r="25" fill="%23bdc3c7"/><circle cx="50" cy="100" r="40" fill="%23bdc3c7"/></svg>'
+const previewMember = ref(null)
 
 function formatTime(timestamp) {
   if (!timestamp) return ''
@@ -137,6 +162,25 @@ function getLogTextClass(action) {
   if (action === '返回') return 'log-return'
   if (action === '离开') return 'log-leave'
   return ''
+}
+
+function getPreviewAvatar(avatar) {
+  if (!avatar) return defaultAvatar
+
+  // 微信头像常带尺寸后缀，0 表示原图，预览时优先用更清晰的版本。
+  if (/^https?:\/\/.*\/(?:0|46|64|96|132)$/i.test(avatar)) {
+    return avatar.replace(/\/(?:46|64|96|132)$/i, '/0')
+  }
+
+  return avatar
+}
+
+function openAvatarPreview(member) {
+  previewMember.value = member
+}
+
+function closeAvatarPreview() {
+  previewMember.value = null
 }
 </script>
 
@@ -249,6 +293,12 @@ function getLogTextClass(action) {
 
 .member-avatar-wrap {
   position: relative;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.member-avatar-wrap:active {
+  transform: scale(0.95);
 }
 
 .member-avatar {
@@ -257,6 +307,7 @@ function getLogTextClass(action) {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(233, 193, 118, 0.3);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
 }
 
 .online-dot {
@@ -344,10 +395,16 @@ function getLogTextClass(action) {
       letter-spacing: 0.08em;
     }
     .score-value {
-      color: #6ee7a0;
       font-size: 38px;
       font-weight: 700;
-      text-shadow: 0 2px 10px rgba(110, 231, 160, 0.25);
+      &.positive {
+        color: #98d3ba;
+        text-shadow: 0 2px 10px rgba(152, 211, 186, 0.25);
+      }
+      &.negative {
+        color: #ffb4ab;
+        text-shadow: 0 2px 10px rgba(255, 180, 171, 0.25);
+      }
     }
   }
 }
@@ -609,8 +666,77 @@ max-height: 600px;
   animation: logFadeIn 0.4s ease-out forwards;
 }
 
+.avatar-preview-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(7, 7, 7, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeMaskIn 180ms ease-out forwards;
+}
+
+.avatar-preview-card {
+  width: min(78vw, 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 20px 18px;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 233, 184, 0.16), rgba(255, 233, 184, 0.05)),
+    #1f1d1a;
+  border: 1px solid rgba(233, 193, 118, 0.24);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+  animation: previewPopIn 180ms ease-out forwards;
+}
+
+.avatar-preview-image {
+  width: min(62vw, 240px);
+  height: min(62vw, 240px);
+  border-radius: 28px;
+  object-fit: cover;
+  image-rendering: auto;
+  border: 3px solid rgba(233, 193, 118, 0.4);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+}
+
+.avatar-preview-name {
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f5ead3;
+  text-align: center;
+  word-break: break-word;
+}
+
 /* Material Symbols */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+@keyframes fadeMaskIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes previewPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 </style>

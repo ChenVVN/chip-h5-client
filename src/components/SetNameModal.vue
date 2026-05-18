@@ -54,12 +54,33 @@ watch(visible, (val) => {
   emit('update:show', val)
 })
 
+function dataUrlSizeInBytes(dataUrl) {
+  const base64 = dataUrl.split(',')[1] || ''
+  const padding = (base64.match(/=*$/)?.[0].length || 0)
+  return Math.floor((base64.length * 3) / 4) - padding
+}
+
+function compressAvatar(canvas) {
+  const maxBytes = 180 * 1024
+  const mimeType = 'image/jpeg'
+  const qualities = [0.88, 0.82, 0.76, 0.7]
+
+  for (const quality of qualities) {
+    const dataUrl = canvas.toDataURL(mimeType, quality)
+    if (dataUrlSizeInBytes(dataUrl) <= maxBytes) {
+      return dataUrl
+    }
+  }
+
+  return canvas.toDataURL(mimeType, 0.7)
+}
+
 function onAvatarRead(file) {
   const img = new Image()
   img.onload = () => {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const maxSize = 200
+    const maxSize = 640
     let { width, height } = img
     if (width > height) {
       if (width > maxSize) { height = (height * maxSize) / width; width = maxSize }
@@ -69,7 +90,7 @@ function onAvatarRead(file) {
     canvas.width = width
     canvas.height = height
     ctx.drawImage(img, 0, 0, width, height)
-    avatar.value = canvas.toDataURL('image/jpeg', 0.7)
+    avatar.value = compressAvatar(canvas)
   }
   img.src = file.content
 }
